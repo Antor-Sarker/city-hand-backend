@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const serviceRouter = require("./routes/serviceRoutes");
+const authRouter = require("./routes/authRouter");
 require("dotenv").config();
 
 const app = express();
@@ -11,10 +12,11 @@ app.use(cors());
 app.use(express.json());
 
 //connect database
-connectDB()
+connectDB();
 
 //routes
-app.use("/api/service",serviceRouter)
+app.use("/api/service", serviceRouter);
+app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.send("city-hand api");
