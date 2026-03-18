@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Services = require("../models/service.js");
 
 exports.getServices = async (req, res) => {
@@ -17,8 +18,24 @@ exports.getServices = async (req, res) => {
     }
 
     const services = await Services.find(query);
-    res.status(200).json(services);
+    return res.status(200).json(services);
   } catch (error) {
-    res.status(500).json({ error: "services data not found!" });
+    return res.status(500).json({ error: "services data not found!" });
+  }
+};
+
+exports.serviceDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+    const service = await Services.findById(id);
+
+    if (!service) return res.status(404).json({ message: "service not found" });
+    return res.json(service);
+  } catch (error) {
+    return res.status(500).json({ error: "service error" });
   }
 };

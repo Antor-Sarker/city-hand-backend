@@ -1,7 +1,7 @@
 const express = require("express");
 const serviceRouter = express.Router();
-const { getServices } = require("../controllers/serviceController");
+const { getServices, serviceDetails } = require("../controllers/serviceController");
 
 serviceRouter.get("/", getServices);
-
+serviceRouter.get("/:id", serviceDetails)
 module.exports = serviceRouter;
