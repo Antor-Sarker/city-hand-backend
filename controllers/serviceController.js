@@ -25,7 +25,7 @@ exports.getServices = async (req, res) => {
 };
 
 exports.serviceDetails = async (req, res) => {
-  try {
+  try { 
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
