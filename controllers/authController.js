@@ -5,6 +5,14 @@ const jwt = require("jsonwebtoken");
 exports.register = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    //check existing user
+    const existingUser = await User.findOne({ email });
+    if (existingUser)
+      return res
+        .status(400)
+        .json({ message: "user already exists with this email" });
+
     const hashPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ email, password: hashPassword });
     await newUser.save();
