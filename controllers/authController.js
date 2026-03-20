@@ -1,6 +1,10 @@
 const User = require("../models/user.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../services/token.js");
 
 exports.register = async (req, res) => {
   try {
@@ -35,15 +39,60 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "wrong password" });
 
-    //create jwt token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    //create Access token and Refresh token
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    user.refreshToken = refreshToken;
+    await user.save();
 
     return res
-      .status(200)
-      .json({ token, userID: user._id, name: user.name, email });
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+      })
+      .json({ accessToken, userID: user._id, name: user.name, email });
   } catch (error) {
     return res.status(500).json({ error: "internal server error" });
+  }
+};
+
+exports.refreshToken = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) {
+      return res.status(401).json({ error: "Refresh token not found" });
+    }
+
+    const verifyed = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    if (!verifyed || !verifyed.id)
+      return res.status(401).json({ error: "invalid token" });
+
+    const user = await User.findById(verifyed?.id);
+    if (!user || user.refreshToken !== token)
+      return res.status(403).json({ error: "invalid token" });
+
+    const newAccessToken = generateAccessToken(user);
+    res.json({ accessToken: newAccessToken });
+  } catch (error) {
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
+exports.logOut = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.status(204).json({ error: "token not found" });
+
+    const user = await User.findOne({ refreshToken: token });
+    if (user) {
+      user.refreshToken = null;
+      await user.save();
+    }
+    res.clearCookie("refreshToken").json({ message: "loged out" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "internal server error" });
   }
 };

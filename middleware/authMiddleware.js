@@ -11,7 +11,7 @@ const authMiddleware = async (req, res, next) => {
 
     const varifyed = jwt.verify(
       authHeader.split(" ")[1],
-      process.env.JWT_SECRET,
+      process.env.ACCESS_TOKEN_SECRET,
     );
 
     if (!varifyed || !varifyed.id)
