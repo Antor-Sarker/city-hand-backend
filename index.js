@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const serviceRouter = require("./routes/serviceRoutes");
 const authRouter = require("./routes/authRouter");
+const userRouter = require("./routes/userRouter");
 require("dotenv").config();
 
 const app = express();
@@ -39,6 +40,7 @@ connectDB();
 //routes
 app.use("/api/service", serviceRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter)
 
 app.get("/", (req, res) => {
   res.send("city-hand api");
