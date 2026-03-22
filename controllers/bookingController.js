@@ -74,3 +74,20 @@ exports.createBooking = async (req, res) => {
     });
   }
 };
+
+exports.getBookings = async (req, res) => {
+  try {
+    const userId = req.userID;
+    const bookings = await Booking.find({ userId });
+
+    return res.status(200).json({
+      success: true,
+      data: bookings,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "server error",
+    });
+  }
+};

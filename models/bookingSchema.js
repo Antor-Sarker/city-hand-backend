@@ -1,7 +1,7 @@
 const { default: mongoose, Schema } = require("mongoose");
 
 const bookingSchema = new Schema(
-  {
+  { 
     userId: { type: String, required: true },
     serviceId: { type: String, required: true },
     serviceName: { type: String, required: true },
