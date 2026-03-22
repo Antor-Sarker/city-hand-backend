@@ -91,3 +91,48 @@ exports.getBookings = async (req, res) => {
     });
   }
 };
+
+exports.updateBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const allowFields = [
+      "plan",
+      "price",
+      "bookingDate",
+      "bookingTime",
+      "phone",
+      "address",
+      "notes",
+      "status",
+    ];
+    const updates = {};
+
+    for (const field of allowFields) {
+      if (req.body[field]) updates[field] = req.body[field];
+    }
+
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      id,
+      {
+        $set: updates,
+      },
+      { returnDocument: "after", runValidators: true },
+    );
+
+    if (!updatedBooking)
+      return res
+        .status(404)
+        .json({ success: false, message: "booking not found" });
+
+    return res.status(200).json({
+      success: 200,
+      message: "booking update successfully",
+      data: updatedBooking,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "server error",
+    });
+  }
+};
