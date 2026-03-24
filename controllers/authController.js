@@ -8,7 +8,15 @@ const {
 
 exports.register = async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, phone, address } = req.body;
+
+    //input required field validation
+    if (!email || !password || !name || !phone || !address) {
+      return res.status(400).json({
+        success: false,
+        message: "required all field",
+      });
+    }
 
     //check existin
     const existingUser = await User.findOne({ email });
@@ -18,10 +26,19 @@ exports.register = async (req, res) => {
         .json({ message: "user already exists with this email" });
 
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, name, password: hashPassword });
+    const newUser = new User({
+      email,
+      name,
+      password: hashPassword,
+      phone,
+      address,
+    });
     await newUser.save();
 
-    return res.status(201).json({ message: "user created successfully" });
+    return res.status(201).json({
+      success: true,
+      message: "user created successfully",
+    });
   } catch (error) {
     return res.status(500).json({ error: "user creation failed" });
   }
