@@ -67,7 +67,9 @@ exports.login = async (req, res) => {
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        maxAge: 3 * 24 * 60 * 60 * 1000,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/",
       })
       .json({ accessToken, userID: user._id, name: user.name, email });
   } catch (error) {
