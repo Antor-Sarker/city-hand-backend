@@ -93,7 +93,7 @@ exports.refreshToken = async (req, res) => {
       return res.status(403).json({ error: "invalid token" });
 
     const newAccessToken = generateAccessToken(user);
-    res.json({ accessToken: newAccessToken });
+    res.json({ accessToken: newAccessToken, name:user?.name, email:user?.email });
   } catch (error) {
     return res.status(500).json({ error: "internal server error" });
   }
