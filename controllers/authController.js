@@ -42,7 +42,7 @@ exports.register = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: "user creation failed" });
   }
-};
+}
 
 exports.login = async (req, res) => {
   try {
@@ -71,7 +71,13 @@ exports.login = async (req, res) => {
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
       })
-      .json({ accessToken, userID: user._id, name: user.name, email });
+      .json({
+        accessToken,
+        userID: user._id,
+        name: user.name,
+        email,
+        role: user.role,
+      });
   } catch (error) {
     return res.status(500).json({ error: "internal server error" });
   }
@@ -93,7 +99,13 @@ exports.refreshToken = async (req, res) => {
       return res.status(403).json({ error: "invalid token" });
 
     const newAccessToken = generateAccessToken(user);
-    res.json({ accessToken: newAccessToken, name:user?.name, email:user?.email });
+    res.json({
+      accessToken: newAccessToken,
+      userID: user._id,
+      name: user?.name,
+      email: user?.email,
+      role: user.role,
+    });
   } catch (error) {
     return res.status(500).json({ error: "internal server error" });
   }
