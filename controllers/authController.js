@@ -101,10 +101,10 @@ exports.refreshToken = async (req, res) => {
     const newAccessToken = generateAccessToken(user);
     res.json({
       accessToken: newAccessToken,
-      userID: user._id,
+      userID: user?._id,
       name: user?.name,
       email: user?.email,
-      role: user.role,
+      role: user?.role,
     });
   } catch (error) {
     return res.status(500).json({ error: "internal server error" });

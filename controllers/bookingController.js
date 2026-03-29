@@ -34,7 +34,7 @@ exports.createBooking = async (req, res) => {
 
     //prevent duplicate booking for the same (user + service + date)
     const duplicate = await Booking.findOne({
-      userId: req.userID,
+      userId: req.user.userId,
       serviceId,
       bookingDate,
     });
@@ -48,7 +48,7 @@ exports.createBooking = async (req, res) => {
 
     //create new booking
     const newBooking = new Booking({
-      userId: req.userID,
+      userId: user.userId,
       serviceId,
       serviceName,
       serviceCategory,
@@ -77,7 +77,7 @@ exports.createBooking = async (req, res) => {
 
 exports.getBookings = async (req, res) => {
   try {
-    const userId = req.userID;
+    const userId = req.user.userId;
     const bookings = await Booking.find({ userId });
 
     return res.status(200).json({

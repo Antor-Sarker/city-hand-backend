@@ -2,7 +2,7 @@ const Users = require("../models/user");
 
 exports.getProfile = async (req, res) => {
   try {
-    const userData = await Users.findById(req.userID).select(
+    const userData = await Users.findById(req.user.userId).select(
       "-password -__v -refreshToken",
     );
     if (!userData) {
@@ -26,7 +26,7 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const userId = req.userID;
+    const userId = req.user.userId
 
     //prevent role and password update
     const { role, password, ...updates } = req.body;
