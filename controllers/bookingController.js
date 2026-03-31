@@ -48,7 +48,7 @@ exports.createBooking = async (req, res) => {
 
     //create new booking
     const newBooking = new Booking({
-      userId: user.userId,
+      userId: req.user.userId,
       serviceId,
       serviceName,
       serviceCategory,
@@ -68,6 +68,7 @@ exports.createBooking = async (req, res) => {
       data: savedBooking,
     });
   } catch (error) {
+    console.log("service booking error: ",error)
     return res.status(500).json({
       success: false,
       message: "server error",

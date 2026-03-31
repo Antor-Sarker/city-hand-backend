@@ -96,7 +96,7 @@ exports.refreshToken = async (req, res) => {
 
     const user = await User.findById(verifyed?.id);
     if (!user || user.refreshToken !== token)
-      return res.status(403).json({ error: "invalid token" });
+      return res.status(401).json({ error: "invalid token" });
 
     const newAccessToken = generateAccessToken(user);
     res.json({
