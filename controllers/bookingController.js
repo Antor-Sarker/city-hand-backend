@@ -42,7 +42,7 @@ exports.createBooking = async (req, res) => {
     if (duplicate) {
       return res.status(409).json({
         success: false,
-        message: "you already have a booking for this service at same date",
+        message: "You've already booked this service for this date.",
       });
     }
 
