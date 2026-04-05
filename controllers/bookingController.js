@@ -76,7 +76,7 @@ exports.createBooking = async (req, res) => {
   }
 };
 
-exports.getBookings = async (req, res) => {
+exports.getSelfBookings = async (req, res) => {
   try {
     const userId = req.user.userId;
     const bookings = await Booking.find({ userId });

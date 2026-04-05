@@ -6,6 +6,7 @@ const serviceRouter = require("./routes/serviceRoutes");
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
+const bookingRouter = require("./routes/bookingRoute");
 require("dotenv").config();
 
 const app = express();
@@ -38,9 +39,10 @@ app.use(cookieParser());
 //connect database
 connectDB();
 
-//routes
+//routes 
 app.use("/api/service", serviceRouter)
 app.use("/api/auth", authRouter)
+app.use("/api/booking", bookingRouter)
 app.use("/api/user", userRouter)
 app.use("/api/admin",adminRouter)
 

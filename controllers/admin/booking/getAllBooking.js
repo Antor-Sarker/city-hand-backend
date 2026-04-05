@@ -1,6 +1,6 @@
 const Booking = require("../../../models/bookingSchema");
 
-exports.getBooking = async (req, res) => {
+exports.getAllBooking = async (req, res) => {
   try {
     const bookings = await Booking.find({});
 
