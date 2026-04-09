@@ -126,7 +126,7 @@ exports.updateBooking = async (req, res) => {
         .json({ success: false, message: "booking not found" });
 
     return res.status(200).json({
-      success: 200,
+      success: true,
       message: "booking update successfully",
       data: updatedBooking,
     });

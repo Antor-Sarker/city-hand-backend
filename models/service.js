@@ -10,7 +10,11 @@ const servicesSchema = new mongoose.Schema({
     premium: Number,
   },
   description: String,
-  image: String,
+  image: {
+    url: String,
+    public_id: String,
+  },
+  status: String,
   serviceInclusions: [String],
 });
 

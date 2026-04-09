@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 const {
   generateAccessToken,
   generateRefreshToken,
-} = require("../services/token.js");
+} = require("../utils/token.js");
+
 
 exports.register = async (req, res) => {
   try {
