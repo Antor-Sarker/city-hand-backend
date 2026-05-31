@@ -6,7 +6,6 @@ const {
   generateRefreshToken,
 } = require("../utils/token.js");
 
-
 exports.register = async (req, res) => {
   try {
     const { email, password, name, phone, address } = req.body;
@@ -43,7 +42,7 @@ exports.register = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: "user creation failed" });
   }
-}
+};
 
 exports.login = async (req, res) => {
   try {
@@ -64,21 +63,33 @@ exports.login = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    return res
-      .cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 3 * 24 * 60 * 60 * 1000,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        path: "/",
-      })
-      .json({
+    const clientType = req.headers["x-client-type"];
+    if (clientType === "web") {
+      return res
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 3 * 24 * 60 * 60 * 1000,
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+          path: "/",
+        })
+        .json({
+          accessToken,
+          userID: user._id,
+          name: user.name,
+          email,
+          role: user.role,
+        });
+    } else {
+      return res.json({
         accessToken,
+        refreshToken,
         userID: user._id,
         name: user.name,
         email,
         role: user.role,
       });
+    }
   } catch (error) {
     return res.status(500).json({ error: "internal server error" });
   }
@@ -86,7 +97,10 @@ exports.login = async (req, res) => {
 
 exports.refreshToken = async (req, res) => {
   try {
-    const token = req.cookies.refreshToken;
+    const clientType = req.headers["x-client-type"];
+
+    const token =
+      clientType === "web" ? req.cookies.refreshToken : req.body.refreshToken;
     if (!token) {
       return res.status(401).json({ error: "Refresh token not found" });
     }
