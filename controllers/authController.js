@@ -128,7 +128,9 @@ exports.refreshToken = async (req, res) => {
 
 exports.logOut = async (req, res) => {
   try {
-    const token = req.cookies.refreshToken;
+    const clientType = req.headers["x-client-type"];
+    const token =
+      clientType === "web" ? req.cookies.refreshToken : req.body?.refreshToken;
     if (!token) return res.status(204).json({ error: "token not found" });
 
     const user = await User.findOne({ refreshToken: token });
@@ -136,7 +138,10 @@ exports.logOut = async (req, res) => {
       user.refreshToken = null;
       await user.save();
     }
-    res.clearCookie("refreshToken").json({ message: "loged out" });
+    
+    if (clientType === "web")
+      res.clearCookie("refreshToken").json({ message: "loged out" });
+    else res.json({ message: "loged out" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "internal server error" });
